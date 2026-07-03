@@ -1,5 +1,5 @@
 import 'package:hrms_app/core/network/dio_client.dart';
-import 'package:hrms_app/model/departmet_model.dart';
+import 'package:hrms_app/model/department_model.dart';
 
 class DepartmentService {
   Future<List<DepartmentModel>> getDepartments() async {

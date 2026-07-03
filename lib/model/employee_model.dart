@@ -11,7 +11,7 @@ class EmployeeModel {
   final bool isDeleted;
   final String status;
   final int department;
-final int designation;
+  final int designation;
   final int? reportingManager;
 
   EmployeeModel({
@@ -30,22 +30,22 @@ final int designation;
     required this.designation,
     required this.reportingManager,
   });
-factory EmployeeModel.fromJson(Map<String, dynamic> json) {
-  return EmployeeModel(
-    id: json["id"],
-    employeeCode: json["employee_code"],
-    name: json["name"],
-    email: json["email"],
-    phone: json["phone"],
-    address: json["address"],
-    dateOfBirth: json["date_of_birth"],
-    salary: json["salary"],
-    joiningDate: json["joining_date"],
-    isDeleted: json["is_deleted"],
-    status: json["status"],
-    department: json["department"],
-    designation: json["designation"],
-    reportingManager: json["reporting_manager"],
-  );
-}
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) {
+    return EmployeeModel(
+      id: json["id"],
+      employeeCode: json["employee_code"],
+      name: json["name"],
+      email: json["email"],
+      phone: json["phone"],
+      address: json["address"],
+      dateOfBirth: json["date_of_birth"],
+      salary: json["salary"],
+      joiningDate: json["joining_date"],
+      isDeleted: json["is_deleted"],
+      status: json["status"],
+      department: json["department"],
+      designation: json["designation"],
+      reportingManager: json["reporting_manager"],
+    );
+  }
 }

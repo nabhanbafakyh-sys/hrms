@@ -7,8 +7,19 @@ class EmployeeService {
 
     final List data = response.data["results"];
 
-    return data
-        .map((e) => EmployeeModel.fromJson(e))
-        .toList();
+    return data.map((e) => EmployeeModel.fromJson(e)).toList();
   }
+
+  Future<EmployeeModel> getEmployeeById(int id) async {
+    final response = await DioClient.dio.get("/employees/$id");
+
+    return EmployeeModel.fromJson(response.data);
+  }
+
+  Future<void> addEmployee(Map<String, dynamic> data) async {
+  await DioClient.dio.post(
+    "/employees/",
+    data: data,
+  );
+}
 }

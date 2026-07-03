@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hrms_app/core/theme/app_color.dart';
 
 class EmployeeCard extends StatelessWidget {
+  final int id;
   final String name;
   final String employeeId;
   final String designation;
@@ -10,6 +12,7 @@ class EmployeeCard extends StatelessWidget {
 
   const EmployeeCard({
     super.key,
+    required this.id,
     required this.name,
     required this.employeeId,
     required this.designation,
@@ -17,157 +20,12 @@ class EmployeeCard extends StatelessWidget {
     required this.status,
   });
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   final bool isActive = status.toLowerCase() == "active";
-
-  //   return Card(
-  //     elevation: 1,
-  //     color: AppColors.white,
-  //     margin: const EdgeInsets.only(bottom: 16),
-  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(16),
-  //       child: Column(
-  //         children: [
-  //           Row(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               const CircleAvatar(
-  //                 radius: 28,
-  //                 child: Icon(Icons.person, size: 30),
-  //               ),
-
-  //               const SizedBox(width: 16),
-
-  //               Expanded(
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       name,
-  //                       style: const TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: FontWeight.bold,
-  //                       ),
-  //                     ),
-
-  //                     const SizedBox(height: 12),
-
-  //                     Text("Employee ID : $employeeId"),
-  //                     const SizedBox(height: 6),
-
-  //                     Text("Designation : $designation"),
-  //                     const SizedBox(height: 6),
-
-  //                     Text("Department : $department"),
-  //                   ],
-  //                 ),
-  //               ),
-  //               Divider(),
-
-  //               const SizedBox(width: 16),
-
-  //               Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.end,
-  //                 children: [
-  //                   Container(
-  //                     width: 90,
-  //                     alignment: Alignment.center,
-  //                     padding: const EdgeInsets.symmetric(vertical: 8),
-  //                     decoration: BoxDecoration(
-  //                       color: isActive ? Colors.green : Colors.red,
-  //                       borderRadius: BorderRadius.circular(20),
-  //                     ),
-  //                     child: Text(
-  //                       status.toUpperCase(),
-  //                       style: const TextStyle(
-  //                         color: Colors.white,
-  //                         fontWeight: FontWeight.bold,
-  //                         fontSize: 12,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Divider(),
-  //                   Row(
-  //                     children: [
-  //                       InkWell(
-  //                         onTap: () {
-  //                           // Navigate to details
-  //                         },
-  //                         borderRadius: BorderRadius.circular(10),
-  //                         child: Container(
-  //                           width: 40,
-  //                           height: 40,
-  //                           decoration: BoxDecoration(
-  //                             color: AppColors.primary.withOpacity(.12),
-  //                             borderRadius: BorderRadius.circular(10),
-  //                           ),
-  //                           child: Icon(
-  //                             Icons.visibility_outlined,
-  //                             color: AppColors.primary,
-  //                             size: 20,
-  //                           ),
-  //                         ),
-  //                       ),
-
-  //                       InkWell(
-  //                         onTap: () {
-  //                           // Navigate to details
-  //                         },
-  //                         borderRadius: BorderRadius.circular(10),
-  //                         child: Container(
-  //                           width: 40,
-  //                           height: 40,
-  //                           decoration: BoxDecoration(
-  //                             color: Colors.red.shade200.withOpacity(.12),
-  //                             borderRadius: BorderRadius.circular(10),
-  //                           ),
-  //                           child: Icon(
-  //                             Icons.visibility_outlined,
-  //                             color: Colors.red.shade300,
-  //                             size: 20,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       InkWell(
-  //                         onTap: () {
-  //                           // Navigate to details
-  //                         },
-  //                         borderRadius: BorderRadius.circular(10),
-  //                         child: Container(
-  //                           width: 40,
-  //                           height: 40,
-  //                           decoration: BoxDecoration(
-  //                             color: Colors.lightBlue.shade300.withOpacity(.12),
-  //                             borderRadius: BorderRadius.circular(10),
-  //                           ),
-  //                           child: Icon(
-  //                             Icons.edit_square,
-  //                             color: Colors.lightBlue,
-  //                             size: 20,
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     final bool isActive = status.toLowerCase() == "active";
 
     return Card(
-      elevation: 1,
+      elevation: 2,
       color: AppColors.white,
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
@@ -203,7 +61,23 @@ class EmployeeCard extends StatelessWidget {
                       Text("Employee ID : $employeeId"),
                       const SizedBox(height: 6),
 
-                      Text("Designation : $designation"),
+                      RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          style: const TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: "Designation : ",
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                            TextSpan(
+                              text: designation,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 6),
 
                       Text("Department : $department"),
@@ -239,7 +113,10 @@ class EmployeeCard extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    // TODO : Details
+                    context.pushNamed(
+                      "employee-details",
+                      pathParameters: {"id": id.toString()},
+                    );
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(

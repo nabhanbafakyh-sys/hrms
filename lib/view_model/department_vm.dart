@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hrms_app/model/departmet_model.dart';
-import 'package:hrms_app/service/dptmnt_service.dart';
+import 'package:hrms_app/model/department_model.dart';
+import 'package:hrms_app/service/department_service.dart';
 
 class DepartmentViewModel extends ChangeNotifier {
   final DepartmentService _service = DepartmentService();
@@ -25,4 +25,11 @@ class DepartmentViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  String getDepartmentName(int id) {
+  try {
+    return departments.firstWhere((e) => e.id == id).name;
+  } catch (e) {
+    return "Unknown";
+  }
+}
 }

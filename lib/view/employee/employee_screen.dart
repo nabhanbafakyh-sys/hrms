@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hrms_app/core/theme/app_color.dart';
 import 'package:hrms_app/view/employee/widgets/employee_card.dart';
 import 'package:hrms_app/view_model/department_vm.dart';
@@ -28,6 +29,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final departmentVM = context.watch<DepartmentViewModel>();
+    final designationVM = context.watch<DesignationViewModel>();
     return Scaffold(
       backgroundColor: AppColors.scaffold,
 
@@ -36,7 +39,12 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              AppSearchBar(hintText: 'search'),
+              AppSearchBar(
+                hintText: "Search employees...",
+                onChanged: (value) {
+                  context.read<EmployeeViewModel>().searchEmployee(value);
+                },
+              ),
 
               const SizedBox(height: 16),
 
@@ -56,19 +64,25 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             ),
                           ),
                           items: [
-                            const DropdownMenuItem(
+                            const DropdownMenuItem<String>(
                               value: "All Departments",
                               child: Text("All Departments"),
                             ),
 
                             ...vm.departments.map(
-                              (department) => DropdownMenuItem(
-                                value: department.name,
+                              (department) => DropdownMenuItem<String>(
+                                value: department.id.toString(),
                                 child: Text(department.name),
                               ),
                             ),
                           ],
-                          onChanged: (value) {},
+                          onChanged: (value) {
+                            if (value != null) {
+                              context
+                                  .read<EmployeeViewModel>()
+                                  .filterByDepartment(value);
+                            }
+                          },
                         );
                       },
                     ),
@@ -77,7 +91,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                   const SizedBox(width: 12),
 
                   ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await context.pushNamed("add-employee");
+
+                      if (!context.mounted) return;
+
+                      context.read<EmployeeViewModel>().getEmployees();
+                    },
                     icon: const Icon(Icons.add),
                     label: const Text("Add"),
                     style: ElevatedButton.styleFrom(
@@ -109,15 +129,20 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     }
 
                     return ListView.builder(
-                      itemCount: vm.employees.length,
+                      itemCount: vm.filteredEmployees.length,
                       itemBuilder: (context, index) {
-                        final employee = vm.employees[index];
-
+                        final employee = vm.filteredEmployees[index];
                         return EmployeeCard(
+                          id: employee.id,
                           employeeId: employee.employeeCode ?? "-",
                           name: employee.name,
-                          designation: employee.designation.toString(),
-                          department: employee.department.toString(),
+                          designation: designationVM.getDesignationTitle(
+                            employee.designation,
+                          ),
+
+                          department: departmentVM.getDepartmentName(
+                            employee.department,
+                          ),
                           status: employee.status,
                         );
                       },

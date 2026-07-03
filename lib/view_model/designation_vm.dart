@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hrms_app/model/designation_model.dart';
-import 'package:hrms_app/service/desigantion_servive.dart';
+import 'package:hrms_app/service/designation_service.dart';
 
 
 class DesignationViewModel extends ChangeNotifier {
@@ -26,4 +26,11 @@ class DesignationViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  String getDesignationTitle(int id) {
+  try {
+    return designations.firstWhere((e) => e.id == id).title;
+  } catch (e) {
+    return "Unknown";
+  }
+}
 }
