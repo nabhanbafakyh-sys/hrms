@@ -27,6 +27,21 @@ class EmployeeFormModel {
 
   String? profileImage;
 
+  String? wageType;
+String? allowances;
+String? deductions;
+String? payrollRule;
+bool overtime = false;
+
+
+String? geoFence;
+bool attendanceRequired = false;
+
+String? skills;
+String? passportNo;
+String? aadhaarNo;
+String? panNo;
+
   EmployeeFormModel({
     this.employeeCode,
     this.name,

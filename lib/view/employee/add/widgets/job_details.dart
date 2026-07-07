@@ -45,10 +45,7 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
         children: [
           const Text(
             "Job Details",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 6),
@@ -61,13 +58,17 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
           const SizedBox(height: 24),
 
           DropdownButtonFormField<int>(
+            validator: (value) {
+              if (value == null) {
+                return "Please select a department";
+              }
+
+              return null;
+            },
             value: selectedDepartment,
             decoration: _decoration("Department"),
             items: departmentVM.departments.map((e) {
-              return DropdownMenuItem(
-                value: e.id,
-                child: Text(e.name),
-              );
+              return DropdownMenuItem(value: e.id, child: Text(e.name));
             }).toList(),
             onChanged: (value) {
               setState(() {
@@ -81,13 +82,17 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
           const SizedBox(height: 16),
 
           DropdownButtonFormField<int>(
+            validator: (value) {
+              if (value == null) {
+                return "Please select a designation";
+              }
+
+              return null;
+            },
             value: selectedDesignation,
             decoration: _decoration("Designation"),
             items: designationVM.designations.map((e) {
-              return DropdownMenuItem(
-                value: e.id,
-                child: Text(e.title),
-              );
+              return DropdownMenuItem(value: e.id, child: Text(e.title));
             }).toList(),
             onChanged: (value) {
               setState(() {
@@ -100,39 +105,63 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
 
           const SizedBox(height: 16),
 
-          TextField(
+          TextFormField(
             controller: widget.joiningController,
             readOnly: true,
+            onTap: () async {
+              final pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+
+              if (pickedDate != null) {
+                widget.joiningController.text = pickedDate
+                    .toIso8601String()
+                    .split("T")
+                    .first;
+              }
+            },
             decoration: _decoration(
               "Joining Date",
               icon: Icons.calendar_month_outlined,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Joining date is required";
+              }
+
+              return null;
+            },
           ),
 
           const SizedBox(height: 16),
 
-          TextField(
+          TextFormField(
             controller: widget.salaryController,
             keyboardType: TextInputType.number,
-            decoration: _decoration(
-              "Salary",
-              icon: Icons.currency_rupee,
-            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return "Salary is required";
+              }
+
+              if (double.tryParse(value.trim()) == null) {
+                return "Enter a valid salary";
+              }
+
+              return null;
+            },
+            decoration: _decoration("Salary", icon: Icons.currency_rupee),
           ),
 
           const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
+          DropdownButtonFormField<String>(
             value: selectedStatus,
             decoration: _decoration("Status"),
             items: const [
-              DropdownMenuItem(
-                value: "Active",
-                child: Text("Active"),
-              ),
-              DropdownMenuItem(
-                value: "Inactive",
-                child: Text("Inactive"),
-              ),
+              DropdownMenuItem(value: "Active", child: Text("Active")),
+              DropdownMenuItem(value: "Inactive", child: Text("Inactive")),
             ],
             onChanged: (value) {
               setState(() {
@@ -149,10 +178,7 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
             value: selectedManager,
             decoration: _decoration("Reporting Manager"),
             items: const [
-              DropdownMenuItem(
-                value: 1,
-                child: Text("No Manager"),
-              ),
+              DropdownMenuItem(value: 1, child: Text("No Manager")),
             ],
             onChanged: (value) {
               setState(() {
@@ -167,18 +193,20 @@ class _JobDetailsStepState extends State<JobDetailsStep> {
     );
   }
 
-  InputDecoration _decoration(
-    String label, {
-    IconData? icon,
-  }) {
+  InputDecoration _decoration(String label, {IconData? icon}) {
     return InputDecoration(
       labelText: label,
       prefixIcon: icon != null ? Icon(icon) : null,
       filled: true,
       fillColor: AppColors.white,
-      border: OutlineInputBorder(
+      enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
     );
   }

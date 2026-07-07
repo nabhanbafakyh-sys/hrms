@@ -1,25 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hrms_app/model/employee_form_model.dart';
 
 class EmployeeFormViewModel extends ChangeNotifier {
-  final form = EmployeeFormModel();
-
-  /// Controllers
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
-  final addressController = TextEditingController();
-  final salaryController = TextEditingController();
+  final personalFormKey = GlobalKey<FormState>();
+  final jobFormKey = GlobalKey<FormState>();
+  final contractFormKey = GlobalKey<FormState>();
+  final payrollFormKey = GlobalKey<FormState>();
+  final documentFormKey = GlobalKey<FormState>();
 
   int currentStep = 0;
 
-  /// ---------------- STEP ----------------
-
   void nextStep() {
-    if (currentStep < 5) {
-      currentStep++;
-      notifyListeners();
-    }
+    currentStep++;
+    notifyListeners();
   }
 
   void previousStep() {
@@ -29,79 +21,194 @@ class EmployeeFormViewModel extends ChangeNotifier {
     }
   }
 
-  /// ---------------- FORM ----------------
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final addressController = TextEditingController();
+  final dobController = TextEditingController();
 
-  void setDepartment(int? id) {
-    form.departmentId = id;
+  final salaryController = TextEditingController();
+  final joiningController = TextEditingController();
+
+  final allowanceController = TextEditingController();
+  final deductionController = TextEditingController();
+
+  final passportController = TextEditingController();
+  final aadhaarController = TextEditingController();
+  final panController = TextEditingController();
+
+  int? departmentId;
+  int? designationId;
+  int? reportingManagerId;
+
+  String status = "Active";
+  String paymentType = "Monthly";
+
+  void setDepartment(int? value) {
+    departmentId = value;
     notifyListeners();
   }
 
-  void setDesignation(int? id) {
-    form.designationId = id;
+  void setDesignation(int? value) {
+    designationId = value;
     notifyListeners();
   }
 
-  void setReportingManager(int? id) {
-    form.reportingManagerId = id;
+  void setReportingManager(int? value) {
+    reportingManagerId = value;
     notifyListeners();
   }
 
-  void setStatus(String value) {
-    form.status = value;
+  void setStatus(String? value) {
+    if (value == null) return;
+
+    status = value;
     notifyListeners();
   }
+    bool validateCurrentStep() {
+    switch (currentStep) {
+      case 0:
+        return personalFormKey.currentState?.validate() ?? false;
 
-  void setJoiningDate(DateTime date) {
-    form.joiningDate = date;
-    notifyListeners();
+      case 1:
+        return jobFormKey.currentState?.validate() ?? false;
+
+      case 2:
+        return contractFormKey.currentState?.validate() ?? true;
+
+      case 3:
+        return payrollFormKey.currentState?.validate() ?? true;
+
+      case 4:
+        return documentFormKey.currentState?.validate() ?? true;
+
+      default:
+        return true;
+    }
   }
 
-  void setDateOfBirth(DateTime date) {
-    form.dateOfBirth = date;
-    notifyListeners();
+  Map<String, dynamic> toEmployeeJson() {
+    return {
+      "name": nameController.text.trim(),
+      "email": emailController.text.trim(),
+      "phone": phoneController.text.trim(),
+      "address": addressController.text.trim(),
+      "date_of_birth": dobController.text.trim(),
+      "salary": salaryController.text.trim(),
+      "joining_date": joiningController.text.trim(),
+      "status": status,
+      "department": departmentId,
+      "designation": designationId,
+      "reporting_manager": reportingManagerId,
+    };
   }
 
-  /// Called before saving
-  void prepareForm() {
-    form.name = nameController.text.trim();
-    form.email = emailController.text.trim();
-    form.phone = phoneController.text.trim();
-    form.address = addressController.text.trim();
-    form.salary = salaryController.text.trim();
-  }
-
-  void clearForm() {
+  void clear() {
     nameController.clear();
     emailController.clear();
     phoneController.clear();
     addressController.clear();
-    salaryController.clear();
+    dobController.clear();
 
-    form.employeeCode = null;
-    form.name = null;
-    form.email = null;
-    form.phone = null;
-    form.address = null;
-    form.salary = null;
-    form.departmentId = null;
-    form.designationId = null;
-    form.reportingManagerId = null;
-    form.dateOfBirth = null;
-    form.joiningDate = null;
-    form.status = "Active";
+    salaryController.clear();
+    joiningController.clear();
+
+    allowanceController.clear();
+    deductionController.clear();
+
+    passportController.clear();
+    aadhaarController.clear();
+    panController.clear();
+
+    departmentId = null;
+    designationId = null;
+    reportingManagerId = null;
+
+    status = "Active";
+    paymentType = "Monthly";
 
     currentStep = 0;
 
     notifyListeners();
   }
 
+String? validateName(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "Name is required";
+  }
+
+  if (value.trim().length < 3) {
+    return "Name must be at least 3 characters";
+  }
+
+  return null;
+}
+
+String? validateEmail(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "Email is required";
+  }
+
+  if (!value.contains("@") || !value.contains(".")) {
+    return "Enter a valid email";
+  }
+
+  return null;
+}
+
+String? validatePhone(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "Phone number is required";
+  }
+
+  if (value.trim().length != 10) {
+    return "Phone number must contain 10 digits";
+  }
+
+  if (int.tryParse(value.trim()) == null) {
+    return "Phone number should contain only numbers";
+  }
+
+  return null;
+}
+
+String? validateAddress(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "Address is required";
+  }
+
+  return null;
+}
+
+String? validateSalary(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "Salary is required";
+  }
+
+  if (double.tryParse(value.trim()) == null) {
+    return "Enter a valid salary";
+  }
+
+  return null;
+}
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
     addressController.dispose();
+    dobController.dispose();
+
     salaryController.dispose();
+    joiningController.dispose();
+
+    allowanceController.dispose();
+    deductionController.dispose();
+
+    passportController.dispose();
+    aadhaarController.dispose();
+    panController.dispose();
+
     super.dispose();
   }
 }

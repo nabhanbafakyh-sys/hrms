@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hrms_app/core/theme/app_color.dart';
+import 'package:hrms_app/view/employee/edit/edit_screen.dart';
+import 'package:hrms_app/view_model/employee_vm.dart';
+import 'package:provider/provider.dart';
 
 class EmployeeCard extends StatelessWidget {
   final int id;
@@ -134,8 +137,44 @@ class EmployeeCard extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 InkWell(
-                  onTap: () {
-                    // TODO : Delete
+                  onTap: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Delete Employee"),
+                        content: const Text(
+                          "Are you sure you want to delete this employee?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text("Cancel"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text("Delete"),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (confirm == true) {
+                      final vm = context.read<EmployeeViewModel>();
+
+                      final success = await vm.deleteEmployee(id);
+
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success
+                                ? "Employee Deleted"
+                                : vm.errorMessage ?? "Delete Failed",
+                          ),
+                        ),
+                      );
+                    }
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
@@ -151,7 +190,10 @@ class EmployeeCard extends StatelessWidget {
                 SizedBox(width: 10),
                 InkWell(
                   onTap: () {
-                    // TODO : Edit
+                    context.pushNamed(
+                      "edit-employee",
+                      pathParameters: {"id": id.toString()},
+                    );
                   },
                   borderRadius: BorderRadius.circular(10),
                   child: Container(

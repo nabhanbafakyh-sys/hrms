@@ -128,24 +128,44 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                       return Center(child: Text(vm.errorMessage!));
                     }
 
-                    return ListView.builder(
-                      itemCount: vm.filteredEmployees.length,
-                      itemBuilder: (context, index) {
-                        final employee = vm.filteredEmployees[index];
-                        return EmployeeCard(
-                          id: employee.id,
-                          employeeId: employee.employeeCode ?? "-",
-                          name: employee.name,
-                          designation: designationVM.getDesignationTitle(
-                            employee.designation,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            "Total Employees: ${vm.filteredEmployees.length}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                        ),
 
-                          department: departmentVM.getDepartmentName(
-                            employee.department,
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: vm.filteredEmployees.length,
+                            itemBuilder: (context, index) {
+                              final employee = vm.filteredEmployees[index];
+                              debugPrint(
+                                "Employee: ${employee.name}, id: ${employee.id}, code: ${employee.employeeCode}",
+                              );
+                              return EmployeeCard(
+                                id: employee.id,
+                                employeeId: employee.employeeCode ?? "-",
+                                name: employee.name,
+                                designation: designationVM.getDesignationTitle(
+                                  employee.designation,
+                                ),
+                                department: departmentVM.getDepartmentName(
+                                  employee.department,
+                                ),
+                                status: employee.status,
+                              );
+                            },
                           ),
-                          status: employee.status,
-                        );
-                      },
+                        ),
+                      ],
                     );
                   },
                 ),
